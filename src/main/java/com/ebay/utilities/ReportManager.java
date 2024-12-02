@@ -68,7 +68,13 @@ public class ReportManager {
     }
 
 
+    public void closeReport(){
 
+        if(extentReports!=null){
+
+            extentReports.flush();
+        }
+    }
 
 
 
