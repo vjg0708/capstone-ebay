@@ -43,9 +43,19 @@ public class PomObject {
         element.click();
     }
 
+    public void clickElement(String type, String value){
+
+        driver.findElement(getLocator(type,value)).click();
+    }
+
     public boolean checkElementIsDisplayed(WebElement element){
 
         return element.isDisplayed();
+    }
+
+    public boolean checkElementIsDisplayed(String type, String value){
+
+        return driver.findElement(getLocator(type,value)).isDisplayed();
     }
 
     public void typeInput(WebElement element,
@@ -54,25 +64,51 @@ public class PomObject {
         element.sendKeys(text);
     }
 
+    public void typeInput(String type, String value,
+                          String text){
+
+        driver.findElement(getLocator(type,value)).sendKeys(text);
+    }
+
     public void clearInput(WebElement inputElement){
 
         inputElement.clear();
     }
 
+    public void clearInput(String type, String value){
+
+        driver.findElement(getLocator(type,value)).clear();
+    }
+
     public void interactWithElement(WebElement element,
-                                    String action){
+                                    String action) {
 
-        switch (action){
+        switch (action) {
 
-            case "enter"-> element.sendKeys(Keys.ENTER);
-            case "backspace"->element.sendKeys(Keys.BACK_SPACE);
-            case "select all"->element.sendKeys(Keys.CONTROL+"A");
-            case "hover"->{
+            case "enter" -> element.sendKeys(Keys.ENTER);
+            case "backspace" -> element.sendKeys(Keys.BACK_SPACE);
+            case "select all" -> element.sendKeys(Keys.CONTROL + "A");
+            case "hover" -> {
                 Actions actions = new Actions(driver);
                 actions.moveToElement(element).perform();
             }
 
         }
+
+    }
+    public void interactWithElement(String type, String value, String action){
+
+            switch (action){
+
+                case "enter"-> driver.findElement(getLocator(type,value)).sendKeys(Keys.ENTER);
+                case "backspace"->driver.findElement(getLocator(type,value)).sendKeys(Keys.BACK_SPACE);
+                case "select all"->driver.findElement(getLocator(type,value)).sendKeys(Keys.CONTROL+"A");
+                case "hover"->{
+                    Actions actions = new Actions(driver);
+                    actions.moveToElement(driver.findElement(getLocator(type,value))).perform();
+                }
+
+            }
     }
 
 

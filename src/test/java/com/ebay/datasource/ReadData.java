@@ -31,17 +31,23 @@ public class ReadData {
 
         List<Object[]> dataList = new ArrayList<>();
 
-        for (Row row : worksheet){
+        int rowSize = worksheet.getPhysicalNumberOfRows();
+        Row row = worksheet.getRow(0);
+
+        int colSize = row.getPhysicalNumberOfCells();
+
+        for(int rsize = 1; rsize<rowSize; rsize++){
 
             List<Object> rowData = new ArrayList<>();
 
-            for (Cell cell : row){
+            for(int csize =0; csize<colSize; csize++){
 
-                rowData.add(getCellValue(cell));
+                rowData.add(getCellValue(worksheet.getRow(rsize).getCell(csize)));
             }
 
             dataList.add(rowData.toArray());
         }
+
         return dataList.toArray(new Object[0][]);
     }
 

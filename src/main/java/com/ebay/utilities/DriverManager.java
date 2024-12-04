@@ -7,12 +7,8 @@ import org.openqa.selenium.edge.EdgeDriver;
 
 public class DriverManager {
 
-    protected WebDriver driver;
+    private WebDriver driver;
 
-    public DriverManager(WebDriver driver){
-
-        this.driver = driver;
-    }
 
     public WebDriver createDriverInstance(String browser){
 
@@ -35,10 +31,9 @@ public class DriverManager {
         }
     }
 
-    public void closeDriver(){
+    public void closeDriver(WebDriver driver){
 
         if(driver!=null){
-            driver.close();
             driver.quit();
         }
     }
