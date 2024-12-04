@@ -9,6 +9,7 @@ import com.ebay.testdata.ReadRegister;
 import com.ebay.utilities.ReportManager;
 import lombok.Getter;
 import lombok.Setter;
+import org.checkerframework.checker.units.qual.A;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.NoSuchElementException;
@@ -65,7 +67,8 @@ public class EbayBuy extends BaseClass{
         System.out.println("Before method");
 
         extentReports = new ExtentReports();
-        sparkReporter = new ExtentSparkReporter("C:\\Users\\harrish.vijay\\OneDrive - ascendion\\Desktop\\Capstone projects\\capstone_project-EBAY\\automation-ebay\\src\\test\\reports\\report-"+LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))+".html");
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
+        sparkReporter = new ExtentSparkReporter("C:\\Users\\harrish.vijay\\OneDrive - ascendion\\Desktop\\Capstone projects\\capstone_project-EBAY\\automation-ebay\\src\\test\\reports\\report_"+currentTime+".html");
 
         reportManager = new ReportManager(extentReports,sparkReporter);
         reportManager.initiateReport("Web Automation","Capstone Project");
@@ -208,13 +211,13 @@ public class EbayBuy extends BaseClass{
         try {
             ebayPom.clickElement("xpath","//li//a[normalize-space()='Buy It Now']");
 
-            ebayPom.clickElement("xpath","//button[@aria-controls=\"nid-vm8-23-content\"]");
+            ebayPom.clickElement("xpath","//button[normalize-space()='Condition']");
             ebayPom.clickElement("xpath","//span[@id='nid-azq-19-content']//span[normalize-space()='New']");
 
-            js.executeScript("window.scrollBy(0,380)");
-            ebayPom.clickElement("xpath","//input[@aria-label=\"Apple iPhone 14 Pro Max\"]");
-            js.executeScript("window.scrollBy(0,380)");
-            ebayPom.clickElement("xpath","//input[@aria-label=\"256 GB\"]");
+            js.executeScript("window.scrollBy(0,430)");
+            ebayPom.clickElement("xpath","//input[@aria-label='Apple iPhone 14 Pro Max']");
+            js.executeScript("window.scrollBy(0,430)");
+            ebayPom.clickElement("xpath","//input[@aria-label='256 GB']");
 
 
         } catch (Exception e) {
@@ -228,14 +231,21 @@ public class EbayBuy extends BaseClass{
 
         try {
 
-            ebayPom.clickElement("xpath","//li[@id=\"item2fb61dfa53\"] ");
+            ebayPom.clickElement("xpath","//li[@id='item2fb61dfa53'] ");
 
+//            Thread.sleep(3000);
             Set<String> windowHandles = driver.getWindowHandles();
             List<String> handler = new ArrayList<>(windowHandles);
+
+            for (String handles : handler){
+
+                System.out.println("handler : " + handles);
+            }
 
             driver.switchTo().window(handler.get(1));
 
             String productPageTitle = driver.getTitle();
+            System.out.println("Page Title : "+productPageTitle);
             Assert.assertEquals(productPageTitle,"Apple iPhone 14 - 256 GB - Black (Verizon)",
                     "product not displayed properly");
 
@@ -243,7 +253,7 @@ public class EbayBuy extends BaseClass{
             String price = productPrice.getText();
             Assert.assertEquals(price,"US $850.00","price not displayed");
 
-            WebElement itemDescription = ebayPom.getWebElement("xpath","//div[@role=\"tabpanel\"]//h2[normalize-space()='Item specifics']");
+            WebElement itemDescription = ebayPom.getWebElement("xpath","//div[@role='tabpanel']//h2[normalize-space()='Item specifics']");
             String descriptionTitle = itemDescription.getText();
 
             Assert.assertEquals(descriptionTitle,"Item specifics","description not available");
@@ -260,7 +270,9 @@ public class EbayBuy extends BaseClass{
 
         try {
 
-            ebayPom.clickElement("id"," //*[@id=\"atcBtn_btn_1\"]");
+            js.executeScript("window.scrollBy(0,340)");
+
+            ebayPom.clickElement("id","//*[@id='atcBtn_btn_1']");
             WebElement cartPage = ebayPom.getWebElement("id","mainContent");
             Assert.assertTrue(cartPage.isDisplayed(),"Cart not visible");
 
@@ -287,7 +299,7 @@ public class EbayBuy extends BaseClass{
             ebayPom.clickElement("xpath","//a[normalize-space()='Daily Deals']");
 
             WebElement spotlightDeals = ebayPom.getWebElement("xpath","//h2[normalize-space()='Spotlight Deal']");
-            Assert.assertEquals(spotlightDeals.getText(),"Spotlight Deal","Deals not available");
+            Assert.assertEquals(spotlightDeals.getText(),"SPOTLIGHT DEAL","Deals not available");
 
             WebElement offerPrice = ebayPom.getWebElement("xpath","//span[normalize-space()='27% off']");
             Assert.assertEquals(offerPrice.getText(),"27% off","Offer Price not available");
@@ -315,12 +327,15 @@ public class EbayBuy extends BaseClass{
             WebElement listTitle = ebayPom.getWebElement("xpath","//li[2]//span[normalize-space()='Buying as a guest']");
             Assert.assertEquals(listTitle.getText(),"Buying as a guest","Option not available");
 
-            ebayPom.clickElement("xpath","//div[@id='wrapper']//li[2]//a[1]");
+            ebayPom.clickElement("xpath","//li//span[normalize-space()='Buying as a guest']");
             WebElement title = ebayPom.getWebElement("xpath","//h1[normalize-space()='Buying as a guest']");
             Assert.assertEquals(title.getText(),"Buying as a guest","Title not available");
 
             driver.navigate().back();
-            search.clear();
+
+            Thread.sleep(3000);
+            System.out.println(driver.getTitle());
+
             search.sendKeys("hacked account");
             search.sendKeys(Keys.ENTER);
 
@@ -337,11 +352,28 @@ public class EbayBuy extends BaseClass{
         }
     }
 
+    @Test(priority = 8)
+    public void signOut(){
+
+        WebElement profile = ebayPom.getWebElement("xpath","//button[@id='gh-ug']");
+        String accountText = profile.getText();
+        Assert.assertEquals(accountText,"Hi Harrish!","Profile name not visible");
+
+        ebayPom.interactWithElement("xpath",
+                "//button[@id='gh-ug']","hover");
+        ebayPom.clickElement("xpath","//a[normalize-space()='Sign out']");
+
+        WebElement signOut = ebayPom.getWebElement("xpath","//div[@id='signout-banner-text']/h1");
+        Assert.assertEquals(signOut.getText(),"You've signed out.","Sign out not visible");
+
+
+    }
+
     @AfterMethod
     public void tearDownAfter(Method method){
 
         System.out.println("After method");
-
+        reportManager.closeReport();
         if(method.getName().equalsIgnoreCase("userLogin")){
 
             currentDriver.quit();
@@ -353,7 +385,6 @@ public class EbayBuy extends BaseClass{
 
         Thread.sleep(5000);
         System.out.println("After Class");
-        reportManager.closeReport();
         driver.close();
     }
 }
