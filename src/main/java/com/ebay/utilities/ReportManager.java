@@ -53,20 +53,6 @@ public class ReportManager {
         return destFile.getPath();
     }
 
-    public ExtentTest passTestCase(ExtentTest test, String message){
-
-        return test.pass(message);
-    }
-
-    public ExtentTest failTestCase(ExtentTest test,
-                                   WebDriver driver,
-                                   String message,
-                                   String description) throws IOException {
-
-        return test.fail(message)
-                .addScreenCaptureFromPath(takeScreenShot(driver), description);
-    }
-
 
     public void closeReport(){
 
